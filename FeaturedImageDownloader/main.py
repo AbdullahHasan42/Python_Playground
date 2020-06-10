@@ -1,0 +1,27 @@
+import requests
+from bs4 import BeautifulSoup
+
+
+def download_image():
+    # Gets the web page as plain text
+    url = "https://wall.alphacoders.com/"
+    source_code = requests.get(url)
+    plain_text = source_code.text
+    soup = BeautifulSoup(plain_text, 'html.parser')
+
+    # Locates the link of the featured image
+    # gets the image format , ID number and removes the thumbnail resolution
+    source_link = soup.find("img", {"class": "img-responsive", "alt": True})['src']
+    image_format = source_link[-4:]
+    image_id = source_link[-10:-4]
+    featured_image_link = source_link.replace("thumb-350-", "")
+
+    # Gets the image as a response object
+    full_sized_image = requests.get(featured_image_link)
+
+    # Save the image response to an image file
+    with open("FeaturedImageDownloader\\" + image_id + image_format, 'wb') as f:
+        f.write(full_sized_image.content)
+
+
+download_image()
