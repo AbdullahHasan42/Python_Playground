@@ -1,4 +1,5 @@
 import requests
+import os
 from bs4 import BeautifulSoup
 
 
@@ -19,8 +20,11 @@ def download_image():
     # Gets the image as a response object
     full_sized_image = requests.get(featured_image_link)
 
+    # Locates and stores the parent dir for the script
+    p_dir = os.path.dirname(__file__)
+    
     # Save the image response to an image file
-    with open("FeaturedImageDownloader\\" + image_id + image_format, 'wb') as f:
+    with open(p_dir +"\\"+ image_id + image_format, 'wb') as f:
         f.write(full_sized_image.content)
 
 
