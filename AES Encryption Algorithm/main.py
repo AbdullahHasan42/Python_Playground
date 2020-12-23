@@ -1,19 +1,26 @@
 from aes import AES
+import os
 
-aes = AES(mode='ecb', input_type='hex')
-        
+aes = AES(mode='ecb', input_type='text')
+
 # Test vector 128-bit key
-key = '000102030405060708090a0b0c0d0e0f'
-    
+key = '424c41434b2045594520504952415445' # 'BLACK EYE PIRATE' in Hexadecimal
+
 # Encrypt data with your key
-data = '00112233445566778899aabbccddeeff'
+data = 'TREASURE'
+
+# 00112233445566778899aabbccddeeff
 
 ciphertext = aes.encryption(data, key)
-    
+
 # Decrypt data with the same key
 plaintext = aes.decryption(ciphertext, key) 
 
 print("\n")
 
+# Verification that the data was encrypted and decrypted correctly
 if plaintext == data:
-    print(True)
+    print('SUCCESS')
+    print("\n")
+
+os.system('PAUSE')

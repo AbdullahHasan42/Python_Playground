@@ -338,13 +338,13 @@ class AES(object):
         :return: Expanded Cipher Keys
         """
         # 128-bit key
-        if len(key) is 32:
+        if len(key) is 32:#32
             self.Nb = 4; self.Nk = 4; self.Nr = 10
         # 192-bit key
-        elif len(key) is 48:
+        elif len(key) is 48:#48
             self.Nb = 4; self.Nk = 6; self.Nr = 12
         # 256-bit key
-        elif len(key) is 64:
+        elif len(key) is 64:#64
             self.Nb = 4; self.Nk = 8; self.Nr = 14
         # Raise error on invalid key size
         else: raise AssertionError("%s Is an invalid Key!\nUse a 128-bit, 192-bit or 256-bit key!" % key)
@@ -428,18 +428,8 @@ class AES(object):
                 return blocks[1:]
             elif isInv:
                 return ''.join([self.xor(self.InvCipher(expanded_key, data[x]), last[x]) for x in range(len(data))])
-        elif self.input is 'data':
-            if not isInv:
-                data = re.findall('.' * 32, binascii.hexlify(self.pad(data)).decode()); blocks = [self.iv]
-                [blocks.append(self.Cipher(expanded_key, self.xor(blocks[-1], x))) for x in data]
-                return b''.join(binascii.unhexlify(x.encode()) for x in blocks[1:])
-            elif isInv:
-                data = re.findall('.' * 32, binascii.hexlify(data).decode()); last = [self.iv] + data
-                return self.unpad(b''.join(binascii.unhexlify(x.encode()) for x in [self.xor(
-                    self.InvCipher(expanded_key, data[x]), last[x]) for x in range(len(data))]))
-
         # Raise error on invalid input
-        else: raise AttributeError("\n\n\tSupported AES inputs are ['hex', 'data']")
+        else: raise AttributeError("\n\n\tSupported AES inputs are ['hex']")
 
     def ecb(self, data, expanded_key, isInv):
         """
@@ -461,12 +451,6 @@ class AES(object):
         elif self.input is 'text':
             if not isInv: return self.Cipher(expanded_key, ''.join('%02x' % x for x in self.pad(data.encode())))
             elif isInv: return str(self.unpad(binascii.unhexlify(self.InvCipher(expanded_key, data).encode())))[2:-1]
-        # Encrypt a stream of binary data
-        elif self.input is 'data':
-            if not isInv: return b''.join(binascii.unhexlify(self.Cipher(
-                expanded_key, str(binascii.hexlify(x))[2:-1]).encode()) for x in self.unblock(data))
-            if isInv: return b''.join(binascii.unhexlify(self.InvCipher(
-                expanded_key, str(binascii.hexlify(x))[2:-1]).encode()) for x in self.unblock(data))
         # Raise error on invalid input
-        else: raise AttributeError("\n\n\tSupported Input types are ['hex', 'text', 'data']")
+        else: raise AttributeError("\n\n\tSupported Input types are ['hex', 'text']")
 
