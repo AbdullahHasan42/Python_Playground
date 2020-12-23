@@ -92,7 +92,7 @@ class AES(object):
         if block < 2 or block > 255:
             raise ValueError("Block Size must be < 2 and > 255")
 
-        if len(data) is block: return data
+        if len(data) == block: return data
         pads = block - (len(data) % block)
         return data + binascii.unhexlify(('%02x' % int(pads)).encode()) + b'\x00' * (pads - 1)
 
@@ -106,9 +106,9 @@ class AES(object):
         """
         p = None
         for x in data[::-1]:
-            if x is 0:
+            if x == 0:
                 continue
-            elif x is not 0:
+            elif x != 0:
                 p = x; break
         data = data[::-1]
         data = data[p:]
@@ -320,9 +320,9 @@ class AES(object):
         i = self.Nk
         while i < self.Nb * (self.Nr + 1):
             temp = w[i - 1]
-            if i % self.Nk is 0:
+            if i % self.Nk == 0:
                 temp = '%08x' % (self.SubWord(self.RotWord(temp)) ^ (self.rcon[i // self.Nk] << 24))
-            elif self.Nk > 6 and i % self.Nk is 4:
+            elif self.Nk > 6 and i % self.Nk == 4:
                 temp = '%08x' % self.SubWord(int(temp, 16))
             w.append('%08x' % (int(w[i - self.Nk], 16) ^ int(temp, 16)))
             i += 1
@@ -338,13 +338,13 @@ class AES(object):
         :return: Expanded Cipher Keys
         """
         # 128-bit key
-        if len(key) is 32:#32
+        if len(key) == 32:#32
             self.Nb = 4; self.Nk = 4; self.Nr = 10
         # 192-bit key
-        elif len(key) is 48:#48
+        elif len(key) == 48:#48
             self.Nb = 4; self.Nk = 6; self.Nr = 12
         # 256-bit key
-        elif len(key) is 64:#64
+        elif len(key) == 64:#64
             self.Nb = 4; self.Nk = 8; self.Nr = 14
         # Raise error on invalid key size
         else: raise AssertionError("%s Is an invalid Key!\nUse a 128-bit, 192-bit or 256-bit key!" % key)
@@ -365,9 +365,9 @@ class AES(object):
         # Get the expanded key set
         expanded_key = self.key_handler(key, isInv)
         # Encrypt using ECB mode
-        if self.mode is 'ecb': return self.ecb(data, expanded_key, isInv)
+        if self.mode == 'ecb': return self.ecb(data, expanded_key, isInv)
         # Encrypt using CBC mode
-        elif self.mode is 'cbc': return self.cbc(data, expanded_key, isInv)
+        elif self.mode == 'cbc': return self.cbc(data, expanded_key, isInv)
         # Raise error on invalid mode
         else: raise AttributeError("\n\n\tSupported AES Modes of Operation are ['ecb', 'cbc']")
 
@@ -419,9 +419,9 @@ class AES(object):
         :param isInv:
         :return: Data as string or binary data (defined by output type)
         """
-        if self.iv is None: raise AttributeError("No Iv found!")
-        if self.input is 'hex':
-            if type(data) is not list: data = data.split()
+        if self.iv == None: raise AttributeError("No Iv found!")
+        if self.input == 'hex':
+            if type(data) != list: data = data.split()
             blocks = [self.iv]; last = [self.iv] + data
             if not isInv:
                 [blocks.append(self.Cipher(expanded_key, self.xor(blocks[-1], x))) for x in data]
@@ -444,11 +444,11 @@ class AES(object):
         :return: Data as string or binary data (defined by output type)
         """
         # Encrypt hex string data
-        if self.input is 'hex':
+        if self.input == 'hex':
             if not isInv: return self.Cipher(expanded_key, data)
             elif isInv: return self.InvCipher(expanded_key, data)
         # Encrypt an text string
-        elif self.input is 'text':
+        elif self.input == 'text':
             if not isInv: return self.Cipher(expanded_key, ''.join('%02x' % x for x in self.pad(data.encode())))
             elif isInv: return str(self.unpad(binascii.unhexlify(self.InvCipher(expanded_key, data).encode())))[2:-1]
         # Raise error on invalid input

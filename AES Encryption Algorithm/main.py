@@ -1,6 +1,9 @@
 from aes import AES
 import os
 
+
+
+# Example of AES encryption
 aes = AES(mode='ecb', input_type='text')
 
 # Test vector 128-bit key
@@ -8,9 +11,6 @@ key = '424c41434b2045594520504952415445' # 'BLACK EYE PIRATE' in Hexadecimal
 
 # Encrypt data with your key
 data = 'TREASURE'
-
-# 00112233445566778899aabbccddeeff
-
 ciphertext = aes.encryption(data, key)
 
 # Decrypt data with the same key
